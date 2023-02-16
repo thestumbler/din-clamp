@@ -57,13 +57,24 @@ module place( thing, align=[0,0,-1]) {
     -align.z*0.5*thing.z])
     children();
 }
+module place_cube( thing, align=[0,0,-1]) {
+  translate([
+    -align.x*0.5*thing.x, 
+    -align.y*0.5*thing.y, 
+    -align.z*0.5*thing.z])
+    cube(thing, center=true);
+}
+    
     
 
-clamp_width = 10;
+clamp_width = 15;
+clamp_color = "darkolivegreen";
 module make_clamp_base() {
+  color(clamp_color)
+  translate([0,0.5*clamp_width,0])
   difference() {
     rotate(90,[1,0,0])
-      linear_extrude(height=10, convexity=10)
+      linear_extrude(height=clamp_width, convexity=10)
         import("din-rail-clamp.dxf");
     // screwdriver release slot/pocket
     box = [1.5, clamp_width-3, 5 ];
@@ -74,12 +85,43 @@ module make_clamp_base() {
 }
 module print_clamp_base() {
   rotate(270,[1,0,0])
-    make_clamp_base();
+    translate([0,-0.5*clamp_width,0])
+      make_clamp_base();
 }
 
 
+pca = [ 30, clamp_width, 6 ];
+pca_dia = 15;
+m3_insert_dia = 5;
+m3_insert_deep = 5;
+hole_spacing = 30;
+hole_xposns = [ -0.5*hole_spacing, +0.5*hole_spacing ];
+module make_panel_controller_adaptor() {
+  make_clamp_base();
+  color(clamp_color)
+  difference() {
+    union() { // make dog bone shape
+      place_cube(pca, [0,0,-1]);
+      for(x=hole_xposns) 
+        translate([x,0,0])
+          cylinder( d=pca_dia, h=pca.z );
+    }
+    for(x=hole_xposns)
+      translate([x,0,pca.z-m3_insert_deep+0.01])
+        cylinder( d=m3_insert_dia, h=m3_insert_deep );
+  }
+}
+module print_panel_controller_adaptor() {
+  rotate(270,[1,0,0])
+    translate([0,-0.5*clamp_width,0])
+      make_panel_controller_adaptor();
+}
+
 *translate([0,0,-16.5])
   place_din_rail(30);
-*make_clamp_base();
 
-print_clamp_base();
+* make_clamp_base();
+*make_panel_controller_adaptor();
+print_panel_controller_adaptor();
+
+* print_clamp_base();
