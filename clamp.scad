@@ -61,14 +61,13 @@ module place( thing, align=[0,0,-1]) {
 
 clamp_width = 10;
 module make_clamp_base() {
-  box = [1.4, clamp_width-1, 5 ];
   difference() {
     rotate(90,[1,0,0])
       linear_extrude(height=10, convexity=10)
         import("din-rail-clamp.dxf");
-  
     // screwdriver release slot/pocket
-    translate([-18.6,-0.5,-13.8])
+    box = [1.5, clamp_width-3, 5 ];
+    translate([-18.6,-1,-13.8])
       place(box, [1,1,-1])
         cube(box, center=true);
   }
