@@ -77,7 +77,7 @@ module make_clamp_base() {
       linear_extrude(height=clamp_width, convexity=10)
         import("din-rail-clamp.dxf");
     // screwdriver release slot/pocket
-    box = [1.5, clamp_width-3, 5 ];
+    box = [1.25, clamp_width-3, 5 ];
     translate([-18.6,-1,-13.8])
       place(box, [1,1,-1])
         cube(box, center=true);
